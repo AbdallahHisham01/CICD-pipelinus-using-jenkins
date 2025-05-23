@@ -1,0 +1,37 @@
+namespace: mern
+buildNumber: 
+express:
+  name: express
+  replicas: 1
+  container:
+    name: express
+
+express_svc:
+  name: express-svc
+  type: ClusterIP
+  ports:
+    port: 3001
+
+mongo:
+  name: mongo
+  replicas: 1
+  container:
+    name: mongo
+
+mongo_svc:
+  name: mongo-svc
+  type: ClusterIP
+  ports:
+    port: 27017
+
+react:
+  name: react
+  replicas: 1
+  container:
+    name: react
+
+react_svc:
+  name: react-svc
+  type: ClusterIP
+  ports:
+    port: 8080

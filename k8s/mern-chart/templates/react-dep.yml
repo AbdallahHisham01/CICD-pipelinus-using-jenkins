@@ -1,0 +1,26 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: react-{{ .Values.buildNumber }}
+  name: {{ .Release.Name }}-react
+  namespace: {{ .Values.namespace }}
+spec:
+  replicas: {{ .Values.react.replicas }}
+  selector:
+    matchLabels:
+      app: react-{{ .Values.buildNumber }}
+  template:
+    metadata:
+      labels:
+        app: react-{{ .Values.buildNumber }}
+    spec: 
+      containers:
+      - image: ahisham45/react:v3
+        name: {{ .Values.react.container.name }}
+        env:
+          - name: API_HOST
+            value: localhost
+          - name: API_PORT
+            value: "30080"
+        

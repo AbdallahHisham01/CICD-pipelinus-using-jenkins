@@ -1,0 +1,26 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: express-{{ .Values.buildNumber }}
+  name: {{ .Release.Name }}-express
+  namespace: {{ .Values.namespace }}
+spec:
+  replicas: {{ .Values.express.replicas }}
+  selector:
+    matchLabels:
+      app: express-{{ .Values.buildNumber }}
+  template:
+    metadata:
+      labels:
+        app: express-{{ .Values.buildNumber }}
+    spec:
+      containers:
+      - image: ahisham45/express:latest
+        name: {{ .Values.express.container.name }}
+        env:
+          - name: MONGODB
+            value: {{ .Release.Name }}-mongo-svc
+
+          - name: MONGO_PORT 
+            value: "27017"
