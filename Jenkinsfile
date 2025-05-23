@@ -75,6 +75,7 @@ pipeline {
                                     body: "React image is vuln check ${BUILD_NUMBER}"
                                 )
                                 error "react image is vuln."
+                            }
                         },
                         express: {
                             def isVuln = sh( script: "trivy image --exit-code 1 --severity HIGH,CRITICAL ${EXPRESS_IMAGE}", returnStatus: true )
