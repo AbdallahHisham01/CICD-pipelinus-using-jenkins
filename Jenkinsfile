@@ -21,7 +21,7 @@ pipeline {
         //                      -Dsonar.sources=./frontend
         //                  """
         //              }
-
+        //
         //              withSonarQubeEnv('sonar') {
         //                  sh """
         //                     ${scannerHome}/bin/sonar-scanner \
@@ -52,10 +52,10 @@ pipeline {
                 script {
                     parallel (
                         react: {
-                            sh 'docker build -t ${REACT_IMAGE} ./frontend'
+                            sh "docker build -t ${REACT_IMAGE} ./frontend"
                         },
                         express: {
-                            sh 'docker build -t ${EXPRESS_IMAGE} ./backend'
+                            sh "docker build -t ${EXPRESS_IMAGE} ./backend"
                         }
                     )
                 }
@@ -67,29 +67,28 @@ pipeline {
                 script {
                     parallel (
                         react: {
-                            def isVuln = sh( script: "trivy image --exit-code 1 --severity HIGH,CRITICAL ${REACT_IMAGE}", returnStatus: true )
-                            if (isVuln) {
+                            def isVuln = sh(script: "trivy image --exit-code 1 --severity HIGH,CRITICAL ${REACT_IMAGE}", returnStatus: true)
+                            if (isVuln != 0) {
                                 emailext(
                                     to: 'abdallahhisham462@gmail.com',
-                                    subject: "React Image Is Vuln",
-                                    body: "React image is vuln check ${BUILD_NUMBER}"
+                                    subject: "React Image Is Vulnerable",
+                                    body: "React image is vulnerable. Build number: ${BUILD_NUMBER}"
                                 )
-                                error "react image is vuln."
+                                error "React image is vulnerable."
                             }
                         },
                         express: {
-                            def isVuln = sh( script: "trivy image --exit-code 1 --severity HIGH,CRITICAL ${EXPRESS_IMAGE}", returnStatus: true )
-                            if (isVuln) {
+                            def isVuln = sh(script: "trivy image --exit-code 1 --severity HIGH,CRITICAL ${EXPRESS_IMAGE}", returnStatus: true)
+                            if (isVuln != 0) {
                                 emailext(
                                     to: 'abdallahhisham462@gmail.com',
-                                    subject: "Express Image Is Vuln",
-                                    body: "Express image is vuln check ${BUILD_NUMBER}"
+                                    subject: "Express Image Is Vulnerable",
+                                    body: "Express image is vulnerable. Build number: ${BUILD_NUMBER}"
                                 )
-                                error "express image is vuln."
+                                error "Express image is vulnerable."
                             }
                         }
                     )
-                    }
                 }
             }
         }
@@ -113,19 +112,19 @@ pipeline {
             steps {   
                 withEnv(["KUBECONFIG=/var/lib/jenkins/.kube/k3s.yaml"]) {
                     sh "helm upgrade --install mern ./k8s/mern-chart"                        
-                    }
                 }
             }
-            stage('Run nginx Helm Charts') {
+        }
+
+        stage('Run nginx Helm Charts') {
             when {
                 changeset "**/k8s/nginx-ingress/**"
             }
             steps {
                 withEnv(["KUBECONFIG=/var/lib/jenkins/.kube/k3s.yaml"]) {    
                     sh "helm install nginx ./k8s/nginx-ingress"
-                 }
                 }
             }
         }
     }
-
+}
