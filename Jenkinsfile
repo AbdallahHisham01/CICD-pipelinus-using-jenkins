@@ -47,9 +47,18 @@ pipeline {
             }
         }
 
-        stage('Build react image') {
+        stage('Build images') {
             steps {
-                sh 'docker build -t ${REACT_IMAGE} ./frontend'
+                script {
+                    parallel (
+                        react: {
+                            sh 'docker build -t ${REACT_IMAGE} ./frontend'
+                        },
+                        express: {
+                            sh 'docker build -t ${EXPRESS_IMAGE} ./backend'
+                        }
+                    )
+                }
             }
         }
 
@@ -64,18 +73,12 @@ pipeline {
             }
         }
 
-        stage('Build express image') {
-            steps {
-                sh 'docker build -t ${EXPRESS_IMAGE} ./backend'
-            }
-        }
-
         stage('Scan express Image with Trivy') {
             steps {
                 script {
                     def isVuln = sh( script: "trivy image --exit-code 1 --severity HIGH,CRITICAL ${EXPRESS_IMAGE}", returnstatus: true )
                     if (isVuln) {
-                        error "react image is vuln."
+                        error "express image is vuln."
                     }
                 }
             }
