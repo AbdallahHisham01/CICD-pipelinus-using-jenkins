@@ -62,24 +62,33 @@ pipeline {
             }
         }
 
-        stage('Scan React Image with Trivy') {
+        stage('Scan Images with Trivy') {
             steps {
                 script {
-                def isVuln = sh( script: "trivy image --exit-code 1 --severity HIGH,CRITICAL ${REACT_IMAGE}", returnstatus: true )
-                if (isVuln) {
-                    error "react image is vuln."
-                }
-                }
-            }
-        }
-
-        stage('Scan express Image with Trivy') {
-            steps {
-                script {
-                    def isVuln = sh( script: "trivy image --exit-code 1 --severity HIGH,CRITICAL ${EXPRESS_IMAGE}", returnstatus: true )
-                    if (isVuln) {
-                        error "express image is vuln."
+                    parallel (
+                        react: {
+                            def isVuln = sh( script: "trivy image --exit-code 1 --severity HIGH,CRITICAL ${REACT_IMAGE}", returnStatus: true )
+                            if (isVuln) {
+                                emailext(
+                                    to: 'abdallahhisham462@gmail.com',
+                                    subject: "React Image Is Vuln",
+                                    body: "React image is vuln check ${BUILD_NUMBER}"
+                                )
+                                error "react image is vuln."
+                        },
+                        express: {
+                            def isVuln = sh( script: "trivy image --exit-code 1 --severity HIGH,CRITICAL ${EXPRESS_IMAGE}", returnStatus: true )
+                            if (isVuln) {
+                                emailext(
+                                    to: 'abdallahhisham462@gmail.com',
+                                    subject: "Express Image Is Vuln",
+                                    body: "Express image is vuln check ${BUILD_NUMBER}"
+                                )
+                                error "express image is vuln."
+                            }
+                        }
                     }
+                    )
                 }
             }
         }
