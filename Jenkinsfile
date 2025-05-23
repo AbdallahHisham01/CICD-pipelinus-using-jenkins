@@ -88,8 +88,8 @@ pipeline {
                                 error "express image is vuln."
                             }
                         }
-                    }
                     )
+                    }
                 }
             }
         }
