@@ -55,9 +55,11 @@ pipeline {
 
         stage('Scan React Image with Trivy') {
             steps {
+                script {
                 def isVuln = sh( script: "trivy image --exit-code 1 --severity HIGH,CRITICAL ${REACT_IMAGE}", returnstatus: true )
                 if (isVuln) {
                     error "react image is vuln."
+                }
                 }
             }
         }
@@ -70,9 +72,11 @@ pipeline {
 
         stage('Scan express Image with Trivy') {
             steps {
-                def isVuln = sh( script: "trivy image --exit-code 1 --severity HIGH,CRITICAL ${EXPRESS_IMAGE}", returnstatus: true )
-                if (isVuln) {
-                    error "react image is vuln."
+                script {
+                    def isVuln = sh( script: "trivy image --exit-code 1 --severity HIGH,CRITICAL ${EXPRESS_IMAGE}", returnstatus: true )
+                    if (isVuln) {
+                        error "react image is vuln."
+                    }
                 }
             }
         }
