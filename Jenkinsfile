@@ -72,7 +72,7 @@ pipeline {
                                 emailext(
                                     to: 'abdallahhisham462@gmail.com',
                                     subject: "React Image Is Vulnerable",
-                                    body: "React image is vulnerable. Build number: ${BUILD_NUMBER}"
+                                    body: "React image is vulnerable."
                                 )
                                 error "React image is vulnerable."
                             }
@@ -83,7 +83,7 @@ pipeline {
                                 emailext(
                                     to: 'abdallahhisham462@gmail.com',
                                     subject: "Express Image Is Vulnerable",
-                                    body: "Express image is vulnerable. Build number: ${BUILD_NUMBER}"
+                                    body: "Express image is vulnerable."
                                 )
                                 error "Express image is vulnerable."
                             }
