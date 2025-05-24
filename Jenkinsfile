@@ -6,34 +6,34 @@ pipeline {
     }
     stages {
 
-        // stage('Code Analysis') {
-        //   environment {
-        //         scannerHome = tool 'sonar'
-        //     }
-        //      steps {
-        //          script {
-        //              withSonarQubeEnv('sonar') {
-        //                  sh """
-        //                     ${scannerHome}/bin/sonar-scanner \
-        //                      -Dsonar.projectKey=frontend \
-        //                      -Dsonar.projectName=Frontend \
-        //                      -Dsonar.projectVersion=1.0 \
-        //                      -Dsonar.sources=./frontend
-        //                  """
-        //              }
-        //
-        //              withSonarQubeEnv('sonar') {
-        //                  sh """
-        //                     ${scannerHome}/bin/sonar-scanner \
-        //                     -Dsonar.projectKey=backend \
-        //                      -Dsonar.projectName=Backend \
-        //                      -Dsonar.projectVersion=1.0 \
-        //                      -Dsonar.sources=./backend
-        //                  """
-        //             }
-        //         }
-        //     }
-        // }
+        stage('Code Analysis') {
+          environment {
+                scannerHome = tool 'sonar'
+            }
+             steps {
+                 script {
+                     withSonarQubeEnv('sonar') {
+                         sh """
+                            ${scannerHome}/bin/sonar-scanner \
+                             -Dsonar.projectKey=frontend \
+                             -Dsonar.projectName=Frontend \
+                             -Dsonar.projectVersion=1.0 \
+                             -Dsonar.sources=./frontend
+                         """
+                     }
+        
+                     withSonarQubeEnv('sonar') {
+                         sh """
+                            ${scannerHome}/bin/sonar-scanner \
+                            -Dsonar.projectKey=backend \
+                             -Dsonar.projectName=Backend \
+                             -Dsonar.projectVersion=1.0 \
+                             -Dsonar.sources=./backend
+                         """
+                    }
+                }
+            }
+        }
 
         stage('Dockerhub Login') {
             steps {
